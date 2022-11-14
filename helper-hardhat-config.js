@@ -1,3 +1,6 @@
+const developmentChains = ["hardhat", "localhost"];
+const DECIMALS = 8;
+const INITIAL_ANSWER = 120000000000;
 const networkConfig = {
   5: {
     name: "goerli",
@@ -10,4 +13,7 @@ const networkConfig = {
 };
 module.exports = {
   networkConfig,
+  developmentChains,
+  DECIMALS,
+  INITIAL_ANSWER,
 };

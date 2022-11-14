@@ -3,9 +3,19 @@
 // Set a minimum funding value in USD
 
 // SPDX-License-Identifier: MIT
+//Pragma
 pragma solidity 0.8.12;
+// Imports
 import "./PriceConverter.sol";
+// Errors
+error FundMe__NotOwner();
 
+/**
+ * @title A contract for crowd support
+ * @author Yogesh Aryal
+ * @notice This contract is to demo buy me a coffee
+ * @dev This implements pric feeds as our libraray
+ */
 contract FundMe {
     using priceConverter for uint256;
 
@@ -18,6 +28,13 @@ contract FundMe {
 
     address public immutable i_owner;
     AggregatorV3Interface public priceFeed;
+    modifier onlyOwner() {
+        // require(msg.sender == i_owner, "Sender is not owner!");
+        // _;
+        // all the code here whoever calls the onlyOwner modifier
+        if (msg.sender != i_owner) revert FundMe__NotOwner();
+        _;
+    }
 
     // using immutable and constant variables to make it gas efficient
     constructor(address priceFeedAddress) {
@@ -26,9 +43,12 @@ contract FundMe {
         priceFeed = AggregatorV3Interface(priceFeedAddress);
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == i_owner, "Sender is not owner!");
-        _; // all the code here whoever calls the onlyOwner modifier
+    receive() external payable {
+        fund();
+    }
+
+    fallback() external payable {
+        fund();
     }
 
     function fund() public payable {
@@ -76,12 +96,4 @@ contract FundMe {
 
     // if the fund is received by contract accidently
     // we use receive function and fallback function to handle.
-
-    receive() external payable {
-        fund();
-    }
-
-    fallback() external payable {
-        fund();
-    }
 }

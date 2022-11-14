@@ -1,5 +1,10 @@
 const { network } = require("hardhat");
-const { networkConfig } = require("../helper-hardhat-config");
+const {
+  networkConfig,
+  developmentChains,
+} = require("../helper-hardhat-config");
+
+const { verify } = require("../utils/verify");
 // using synctactic sugar
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
@@ -9,18 +14,35 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   //   if chainId is X use address Y
   // Here the aave comes for the problem
   // const address = "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e";
-  const ethUsdPriceFeed = networkConfig[chainId]["ethUsdPriceFeed"];
+  // const ethUsdPriceFeed = networkConfig[chainId]["ethUsdPriceFeed"];
 
   // what do we do for the chain that doesn't even have a price feed address on it
-
+  let ethUsdPriceFeedAddress;
+  if (developmentChains.includes(network.name)) {
+    const ethUsdAggregator = await deployments.get("MockV3Aggregator");
+    ethUsdPriceFeedAddress = ethUsdAggregator.address;
+  } else {
+    ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
+  }
   // if the contract doesn't exist, we deploy a minimal version for our local testing
   // Mock is technically a deploy script
 
   // well what happens when we want to change chains?
   // when working on localhost or hardhat network we want to use a mock
+  const args = [ethUsdPriceFeedAddress];
   const fundMe = await deploy("FundMe", {
     from: deployer,
-    args: [ethUsdPriceFeed], //put price feed address
+    args: args, //put price feed address
     log: true,
+    waitConfirmations: network.config.blockConfirmations || 1,
   });
+  if (
+    !developmentChains.includes(network.name) &&
+    process.env.ETHERSCAN_API_KEY
+  ) {
+    await verify(fundMe.address, args);
+  }
+  log("------------------------------------------------");
 };
+
+module.exports.tags = ["all", "fundme"];
