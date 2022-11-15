@@ -28,4 +28,11 @@ module.exports = {
       default: 0,
     },
   },
+  gasReporter: {
+    enabled: true,
+    outputFile: "gas-reporter.txt",
+    noColors: true,
+    currency: "USD",
+    coinmarketcap: process.env.COINMARKETCAP_API_KEY,
+  },
 };

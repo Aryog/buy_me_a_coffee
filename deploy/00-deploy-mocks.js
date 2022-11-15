@@ -9,7 +9,7 @@ const {
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
-
+  // all above data from hre (Hardhat Runtime Environment)
   if (developmentChains.includes(network.name)) {
     log("Local netork detected! Deploying mocks...");
     await deploy("MockV3Aggregator", {
