@@ -23,10 +23,10 @@ contract FundMe {
     //  The directive using A for B; can be used to attach library functions of library A to a given type B. These functions will used the caller type as their first parameter (identified using self).
 
     uint256 public constant MINIMUM_USD = 25;
-    address[] public funders;
-    mapping(address => uint256) public addressToAmountFunded;
+    address[] private funders;
+    mapping(address => uint256) private addressToAmountFunded;
 
-    address public immutable i_owner;
+    address private immutable i_owner;
     AggregatorV3Interface public priceFeed;
     modifier onlyOwner() {
         // require(msg.sender == i_owner, "Sender is not owner!");
@@ -96,4 +96,24 @@ contract FundMe {
 
     // if the fund is received by contract accidently
     // we use receive function and fallback function to handle.
+
+    function getOwner() public view returns (address) {
+        return i_owner;
+    }
+
+    function getFunder(uint256 index) public view returns (address) {
+        return funders[index];
+    }
+
+    function getAddressToAmountFunded(address funder)
+        public
+        view
+        returns (uint256)
+    {
+        return addressToAmountFunded[funder];
+    }
+
+    function getPriceFeed() public view returns (AggregatorV3Interface) {
+        return priceFeed;
+    }
 }

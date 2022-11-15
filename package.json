@@ -1,5 +1,7 @@
 {
-  "name": "hardhat-project",
+  "name": "hardhat-buy-me-coffee",
+  "author": "Yogesh Aryal",
+  "version":"1.0.0",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
     "hardhat": "^2.12.2"
@@ -11,5 +13,9 @@
     "ethers": "^5.7.2",
     "hardhat-deploy": "^0.11.20",
     "hardhat-gas-reporter": "^1.0.9"
+  },
+  "scripts": {
+    "test": "npx hardhat test",
+    "test:staging" : "npx hardhat test --network goerli"
   }
 }
